@@ -1,5 +1,5 @@
-import React from "react";
-const { useState, useRef, useLayoutEffect } = React;
+import { h } from "preact";
+import { useState, useRef, useLayoutEffect } from "preact/hooks";
 
 import { defaultClientManager } from "./client";
 import QueryManager from "./queryManager";
@@ -15,11 +15,17 @@ export default function useQuery(packet) {
       return;
     }
     if (!queryManager.current) {
-      queryManager.current = new QueryManager({ client, cache: options.cache, setState: setQueryState }, packet);
+      queryManager.current = new QueryManager(
+        { client, cache: options.cache, setState: setQueryState },
+        packet
+      );
     }
     queryManager.current.load(packet);
   });
-  useLayoutEffect(() => () => queryManager.current && queryManager.current.dispose(), []);
+  useLayoutEffect(
+    () => () => queryManager.current && queryManager.current.dispose(),
+    []
+  );
 
   return queryState;
 }

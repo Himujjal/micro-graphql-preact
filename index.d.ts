@@ -1,4 +1,8 @@
-import React, { StatelessComponent, ComponentClass, ClassicComponentClass, Children } from "react";
+import {
+  FunctionalComponent,
+  ComponentClass,
+  ComponentChildren as Children
+} from "preact";
 
 type MutationSubscription = {
   when: string | RegExp;
@@ -43,9 +47,20 @@ export class Cache {
 }
 
 export class Client {
-  constructor(options: { endpoint: string; noCaching?: boolean; cacheSize?: number; fetchOptions?: any });
+  constructor(options: {
+    endpoint: string;
+    noCaching?: boolean;
+    cacheSize?: number;
+    fetchOptions?: any;
+  });
   runQuery(query: string, variables?: any): Promise<any>;
-  getGraphqlQuery({ query, variables }: { query: string; variables: any }): string;
+  getGraphqlQuery({
+    query,
+    variables
+  }: {
+    query: string;
+    variables: any;
+  }): string;
   processMutation(mutation: string, variables?: any): Promise<any>;
   runMutation(mutation: string, variables?: any): Promise<any>;
   getCache(query: string): Cache;
@@ -66,20 +81,35 @@ type BuildMutationOptions = {
   client?: Client;
 };
 
-export const buildQuery: (queryText: string, variables?: any, options?: BuildQueryOptions) => QueryPacket;
-export const buildMutation: (mutationText: string, options?: BuildQueryOptions) => MutationPacket;
+export const buildQuery: (
+  queryText: string,
+  variables?: any,
+  options?: BuildQueryOptions
+) => QueryPacket;
+export const buildMutation: (
+  mutationText: string,
+  options?: BuildQueryOptions
+) => MutationPacket;
 
-type IReactComponent<P = any> = StatelessComponent<P> | ComponentClass<P> | ClassicComponentClass<P>;
+type IReactComponent<P = any> =
+  | FunctionalComponent<P>
+  | ComponentClass<P>
+  | ClassicComponentClass<P>;
 
 export const compress: any;
 export const setDefaultClient: (client: Client) => void;
 export const getDefaultClient: () => Client;
 
-export function useQuery<TResults = any>(queryPacket: QueryPacket): QueryPayload<TResults>;
+export function useQuery<TResults = any>(
+  queryPacket: QueryPacket
+): QueryPayload<TResults>;
 
-export function useMutation<TResults = any>(mutationPacket: MutationPacket): MutationPayload<TResults>;
+export function useMutation<TResults = any>(
+  mutationPacket: MutationPacket
+): MutationPayload<TResults>;
 
-type RenderProps<Query, Mutation> = Record<keyof Query, QueryPayload> & Record<keyof Mutation, MutationPayload>;
+type RenderProps<Query, Mutation> = Record<keyof Query, QueryPayload> &
+  Record<keyof Mutation, MutationPayload>;
 
 type QueryMap = { [s: string]: QueryPacket };
 type MutationMap = { [s: string]: MutationPacket };
@@ -90,6 +120,7 @@ type ComponentPacket<Query extends QueryMap, Mutation extends MutationMap> = {
   children(fn: RenderProps<Query, Mutation>): React.ReactNode;
 };
 
-export function GraphQL<QueryType extends QueryMap = {}, MutationType extends MutationMap = {}>(
-  props: ComponentPacket<QueryType, MutationType>
-): JSX.Element;
+export function GraphQL<
+  QueryType extends QueryMap = {},
+  MutationType extends MutationMap = {}
+>(props: ComponentPacket<QueryType, MutationType>): JSX.Element;
